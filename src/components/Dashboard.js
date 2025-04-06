@@ -169,7 +169,7 @@ function Dashboard({ user }) {
           ) : activeTab === "drive" && driveLetters.length > 0 ? (
             driveLetters.map((letter) => (
               <div className="letter-card drive-letter" key={letter.id}>
-                <h3 className="letter-title">{letter.title || "Untitled Letter"}</h3>
+                <h3 className="letter-title">{letter.name || "Untitled Letter"}</h3>
                 <div className="letter-meta">
                   <span>Created: {new Date(letter.createdTime).toLocaleDateString()}</span>
                   <span>Modified: {new Date(letter.modifiedTime).toLocaleDateString()}</span>
