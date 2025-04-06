@@ -227,6 +227,7 @@ function Editor({ user }) {
           placeholder="Untitled Letter"
           className="letter-title-input"
           // dir="ltr"
+          
         />
         <div className="editor-actions">
           <span className="save-status">{saveStatus}</span>
