@@ -51,5 +51,4 @@ function SignUp({ setIsAuthenticated, setUser }) {
     </div>
   )
 }
-
 export default SignUp
