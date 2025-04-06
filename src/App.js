@@ -10,16 +10,18 @@ import Editor from "./components/Editor"
 import Navbar from "./components/Navbar"
 import LandingPage from "./components/LandingPage"
 
+// Backend URL from .env file
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user is already logged in
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/auth/status", {
+        const response = await fetch(`${BACKEND_URL}/api/auth/status`, {
           method: "GET",
           credentials: "include",
         })
@@ -41,7 +43,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch(`${BACKEND_URL}/api/auth/logout`, {
         method: "GET",
         credentials: "include",
       })
@@ -91,4 +93,3 @@ function App() {
 }
 
 export default App
-
