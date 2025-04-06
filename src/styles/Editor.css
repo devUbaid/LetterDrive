@@ -197,7 +197,7 @@
   .editor-actions {
     margin-top: 15px;
     width: 100%;
-    justify-content: st;
+    justify-content: start;
   }
 
   .formatting-toolbar select {

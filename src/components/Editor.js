@@ -29,8 +29,15 @@ function Editor({ user }) {
 
   useEffect(() => {
     if (id) fetchLetter();
-    else setCursorToEnd();
+    else initializeNewLetter();
   }, [id]);
+
+  const initializeNewLetter = () => {
+    if (contentRef.current) {
+      contentRef.current.innerHTML = '';
+    }
+    setCursorToEnd();
+  };
 
   const setCursorToEnd = () => {
     setTimeout(() => {
@@ -307,8 +314,14 @@ function Editor({ user }) {
           suppressContentEditableWarning
           // dir="ltr"
           onInput={(e) => {
-            handleChange({ target: { name: 'content', value: e.currentTarget.innerHTML } });
+            const newContent = e.currentTarget.innerHTML;
+            setLetter(prev => ({ ...prev, content: newContent }));
             updateToolbarState();
+            
+            if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+            saveTimeoutRef.current = setTimeout(() => {
+              saveLetter();
+            }, 1000);
           }}
           onKeyDown={handleKeyDown}
           onKeyUp={updateToolbarState}
