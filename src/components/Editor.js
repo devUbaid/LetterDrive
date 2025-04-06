@@ -153,15 +153,9 @@ function Editor({ user }) {
 
   const handleSizeChange = (size) => {
     saveSelection();
-    
-    // Remove any existing size classes from the selection
     document.execCommand('removeFormat', false, null);
-    
-    // Create a span with the new size class
     const span = document.createElement('span');
     span.className = size;
-    span.dir = "ltr"; // Ensure LTR direction within the span
-    
     const selection = window.getSelection();
     if (selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
@@ -177,7 +171,6 @@ function Editor({ user }) {
         selection.addRange(newRange);
       }
     }
-    
     setActiveSize(size);
     contentRef.current.focus();
   };
@@ -213,25 +206,12 @@ function Editor({ user }) {
     doc.save(`${letter.title || 'Untitled'}.pdf`);
   };
 
-  // Fix text direction
-  useEffect(() => {
-    if (contentRef.current) {
-      // Ensure content element has proper text direction
-      contentRef.current.style.direction = "ltr";
-      contentRef.current.style.textAlign = "left";
-      contentRef.current.setAttribute("dir", "ltr");
-      
-      // Also set the attribute on the document's body as it can inherit
-      document.body.setAttribute("dir", "ltr");
-    }
-  }, [contentRef.current]);
-
   const characterCount = letter.content.replace(/<[^>]*>/g, '').length;
   const wordCount = letter.content.replace(/<[^>]*>/g, '').trim().split(/\s+/).length || 0;
   const wordLimit = 500;
 
   return (
-    <div className="editor-container" dir="ltr">
+    <div className="editor-container">
       <div className="editor-header">
         <input
           type="text"
@@ -241,7 +221,6 @@ function Editor({ user }) {
           placeholder="Untitled Letter"
           className="letter-title-input"
           dir="ltr"
-          style={{direction: "ltr", textAlign: "left"}}
         />
         <div className="editor-actions">
           <span className="save-status">{saveStatus}</span>
@@ -320,7 +299,6 @@ function Editor({ user }) {
           contentEditable="true"
           suppressContentEditableWarning
           dir="ltr"
-          style={{direction: "ltr", textAlign: "left", unicodeBidi: "isolate"}}
           onInput={(e) => {
             handleChange({ target: { name: 'content', value: e.currentTarget.innerHTML } });
             updateToolbarState();
