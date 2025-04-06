@@ -253,13 +253,13 @@ function LandingPage() {
               <h3>Company</h3>
               <ul>
                 <li>
-                  <a href="/about">About Us</a>
+                  <a href="/">About Us</a>
                 </li>
                 <li>
-                  <a href="/contact">Contact</a>
+                  <a href="/">Contact</a>
                 </li>
                 <li>
-                  <a href="/careers">Careers</a>
+                  <a href="/">Careers</a>
                 </li>
               </ul>
             </div>
@@ -268,13 +268,13 @@ function LandingPage() {
               <h3>Legal</h3>
               <ul>
                 <li>
-                  <a href="/terms">Terms of Service</a>
+                  <a href="/">Terms of Service</a>
                 </li>
                 <li>
-                  <a href="/privacy">Privacy Policy</a>
+                  <a href="/">Privacy Policy</a>
                 </li>
                 <li>
-                  <a href="/cookies">Cookie Policy</a>
+                  <a href="/">Cookie Policy</a>
                 </li>
               </ul>
             </div>
