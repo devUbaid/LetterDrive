@@ -10,7 +10,6 @@ function SignUp({ setIsAuthenticated, setUser }) {
     const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"
     window.location.href = `${backendUrl}/api/auth/google?source=signup`
   }
-
   return (
     <div className="auth-container">
       <div className="auth-content">

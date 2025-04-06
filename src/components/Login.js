@@ -6,22 +6,25 @@ import loginIllustration from "../assets/login-illustration.svg"
 
 function Login({ setIsAuthenticated, setUser }) {
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google?source=login`
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"
+    window.location.href = `${backendUrl}/api/auth/google?source=login`
   }
 
   return (
     <div className="auth-container">
       <div className="auth-content">
         <div className="auth-illustration">
-          <img src={loginIllustration || "/placeholder.svg"} alt="Login Illustration" />
+          <img src={loginIllustration} alt="Login Illustration" />
         </div>
         <div className="auth-form-container">
           <div className="auth-form">
             <h1>Welcome Back</h1>
-            <p className="auth-description">Log in to access your letters and continue writing.</p>
+            <p className="auth-description">
+              Log in to access your letters and continue writing.
+            </p>
 
             <button className="google-auth-btn" onClick={handleGoogleLogin}>
-              <img src={googleIcon || "/placeholder.svg"} alt="Google" className="google-icon" />
+              <img src={googleIcon} alt="Google" className="google-icon" />
               <span>Log in with Google</span>
             </button>
 
@@ -31,7 +34,8 @@ function Login({ setIsAuthenticated, setUser }) {
 
             <div className="auth-info">
               <p>
-                By logging in, you agree to our <Link to="/terms">Terms of Service</Link> and{" "}
+                By logging in, you agree to our{" "}
+                <Link to="/terms">Terms of Service</Link> and{" "}
                 <Link to="/privacy">Privacy Policy</Link>.
               </p>
             </div>

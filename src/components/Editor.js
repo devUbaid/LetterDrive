@@ -25,19 +25,20 @@ function Editor({ user }) {
   const contentRef = useRef(null);
   const selectionRef = useRef(null);
 
+  const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
   useEffect(() => {
     if (id) fetchLetter();
     else setCursorToEnd();
   }, [id]);
 
-  // Set cursor to end of content when needed
   const setCursorToEnd = () => {
     setTimeout(() => {
       if (contentRef.current) {
         const range = document.createRange();
         const selection = window.getSelection();
         range.selectNodeContents(contentRef.current);
-        range.collapse(false); // false means collapse to end
+        range.collapse(false);
         selection.removeAllRanges();
         selection.addRange(range);
         contentRef.current.focus();
@@ -45,7 +46,6 @@ function Editor({ user }) {
     }, 0);
   };
 
-  // Save selection state
   const saveSelection = () => {
     const selection = window.getSelection();
     if (selection.rangeCount > 0) {
@@ -53,7 +53,6 @@ function Editor({ user }) {
     }
   };
 
-  // Restore previously saved selection
   const restoreSelection = () => {
     if (selectionRef.current && contentRef.current) {
       const selection = window.getSelection();
@@ -65,7 +64,7 @@ function Editor({ user }) {
 
   const fetchLetter = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/letters/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/letters/${id}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -83,7 +82,7 @@ function Editor({ user }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLetter((prev) => ({ ...prev, [name]: value }));
+    setLetter(prev => ({ ...prev, [name]: value }));
 
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(() => {
@@ -95,7 +94,7 @@ function Editor({ user }) {
     setSaving(true);
     setSaveStatus('Saving...');
     try {
-      const url = id ? `http://localhost:5000/api/letters/${id}` : 'http://localhost:5000/api/letters';
+      const url = id ? `${API_BASE_URL}/api/letters/${id}` : `${API_BASE_URL}/api/letters`;
       const method = id ? 'PUT' : 'POST';
       const response = await fetch(url, {
         method,
@@ -121,13 +120,13 @@ function Editor({ user }) {
     setSavingToDrive(true);
     setSaveStatus('Saving to Google Drive...');
     try {
-      const response = await fetch(`http://localhost:5000/api/drive/save/${id || letter._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/drive/save/${id || letter._id}`, {
         method: 'POST',
         credentials: 'include',
       });
       if (response.ok) {
         const data = await response.json();
-        setLetter((prev) => ({ ...prev, savedToDrive: true, driveFileId: data.fileId }));
+        setLetter(prev => ({ ...prev, savedToDrive: true, driveFileId: data.fileId }));
         setSaveStatus('Saved to Google Drive');
         setTimeout(() => setSaveStatus(''), 2000);
       } else setSaveStatus('Failed to save to Drive');
@@ -138,18 +137,10 @@ function Editor({ user }) {
     }
   };
 
-  // Improved formatting handler that maintains multiple formats
   const handleFormatting = (format) => {
-    // Save the current selection
     saveSelection();
-    
-    // Apply the formatting command
     document.execCommand(format, false, null);
-    
-    // Update the toolbar state to show which formats are active
     updateToolbarState();
-    
-    // Make sure the content element stays focused
     contentRef.current.focus();
   };
 
@@ -161,22 +152,23 @@ function Editor({ user }) {
   };
 
   const handleSizeChange = (size) => {
-    const selection = window.getSelection();
     saveSelection();
     
+    // Remove any existing size classes from the selection
+    document.execCommand('removeFormat', false, null);
+    
+    // Create a span with the new size class
+    const span = document.createElement('span');
+    span.className = size;
+    
+    const selection = window.getSelection();
     if (selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
-      
       if (!range.collapsed) {
-        const span = document.createElement('span');
-        span.className = size;
         range.surroundContents(span);
       } else {
-        const span = document.createElement('span');
-        span.className = size;
-        span.innerHTML = '&#8203;'; // Zero-width space
+        span.innerHTML = '&#8203;';
         range.insertNode(span);
-        
         const newRange = document.createRange();
         newRange.setStart(span, 1);
         newRange.collapse(true);
@@ -198,7 +190,6 @@ function Editor({ user }) {
   };
 
   const handleKeyDown = (e) => {
-    // Handle special keys as needed
     if (e.key === 'Tab') {
       e.preventDefault();
       document.execCommand('insertHTML', false, '&emsp;');
@@ -235,11 +226,16 @@ function Editor({ user }) {
           onChange={handleChange}
           placeholder="Untitled Letter"
           className="letter-title-input"
+          dir="ltr"
         />
         <div className="editor-actions">
           <span className="save-status">{saveStatus}</span>
-          <button className="save-btn" onClick={saveLetter} disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
-          <button className="save-drive-btn" onClick={saveLetterToDrive} disabled={savingToDrive}>{savingToDrive ? 'Saving to Drive...' : 'Save to Google Drive'}</button>
+          <button className="save-btn" onClick={saveLetter} disabled={saving}>
+            {saving ? 'Saving...' : 'Save'}
+          </button>
+          <button className="save-drive-btn" onClick={saveLetterToDrive} disabled={savingToDrive}>
+            {savingToDrive ? 'Saving to Drive...' : 'Save to Google Drive'}
+          </button>
           <button onClick={downloadAsTxt}>Download TXT</button>
           <button onClick={exportToPDF}>Export to PDF</button>
         </div>
@@ -263,10 +259,10 @@ function Editor({ user }) {
           onChange={(e) => handleSizeChange(e.target.value)}
           aria-label="Font size"
         >
-          <option className='option' value="text-small">Small</option>
-          <option className='option' value="text-normal">Normal</option>
-          <option className='option' value="text-large">Large</option>
-          <option className='option' value="text-xlarge">Extra Large</option>
+          <option value="text-small">Small</option>
+          <option value="text-normal">Normal</option>
+          <option value="text-large">Large</option>
+          <option value="text-xlarge">Extra Large</option>
         </select>
 
         <button 
@@ -308,6 +304,7 @@ function Editor({ user }) {
           className="letter-content-editable"
           contentEditable="true"
           suppressContentEditableWarning
+          dir="ltr"
           onInput={(e) => {
             handleChange({ target: { name: 'content', value: e.currentTarget.innerHTML } });
             updateToolbarState();
@@ -317,7 +314,6 @@ function Editor({ user }) {
           onMouseUp={updateToolbarState}
           onBlur={saveSelection}
           onFocus={() => {
-            // Only set cursor to end when initially focused and empty
             if (!letter.content) {
               setCursorToEnd();
             }

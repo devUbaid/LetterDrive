@@ -139,6 +139,7 @@
   overflow-y: auto;
   white-space: pre-wrap;
   direction: ltr;
+  unicode-bidi: normal;
   color: var(--secondary-color);
   text-align: left;
   caret-color: #000;

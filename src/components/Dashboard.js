@@ -9,6 +9,8 @@ function Dashboard({ user }) {
   const [activeTab, setActiveTab] = useState("local")
   const navigate = useNavigate()
 
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
+
   useEffect(() => {
     fetchLetters()
   }, [])
@@ -16,7 +18,7 @@ function Dashboard({ user }) {
   const fetchLetters = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:5000/api/letters", {
+      const response = await fetch(`${BACKEND_URL}/api/letters`, {
         method: "GET",
         credentials: "include",
       })
@@ -41,7 +43,7 @@ function Dashboard({ user }) {
   const fetchDriveLetters = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:5000/api/drive/letters", {
+      const response = await fetch(`${BACKEND_URL}/api/drive/letters`, {
         method: "GET",
         credentials: "include",
       })
@@ -64,13 +66,12 @@ function Dashboard({ user }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/letters/${id}`, {
+      const response = await fetch(`${BACKEND_URL}/api/letters/${id}`, {
         method: "DELETE",
         credentials: "include",
       })
 
       if (response.ok) {
-        // Remove the letter from the state
         setLetters(letters.filter((letter) => letter._id !== id))
       } else {
         console.error("Failed to delete letter")
@@ -173,4 +174,3 @@ function Dashboard({ user }) {
 }
 
 export default Dashboard
-
