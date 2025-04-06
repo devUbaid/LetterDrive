@@ -1,0 +1,262 @@
+:root {
+  --primary-color: #2c6ecf;
+  --secondary-color: #4285f4;
+  --danger-color: #f44336;
+  --light-gray: #f8f9fa;
+  --text-color: #333;
+  --muted-text: #777;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease-in-out;
+}
+
+body {
+  background-color: var(--light-gray);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+}
+
+.dashboard-container {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  gap: 2rem;
+  display: flex
+;
+  flex-direction: column;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.dashboard-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--secondary-color);
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.new-letter-btn,
+.fetch-drive-btn,
+.fetch-local-btn {
+  padding: 12px 22px;
+  font-size: 15px;
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.fetch-drive-btn,
+.fetch-local-btn {
+  background-color: var(--secondary-color);
+}
+
+.new-letter-btn:hover {
+  background-color: var(--primary-light);
+ 
+}
+
+.fetch-drive-btn:hover,
+.fetch-local-btn:hover {
+  background-color: var(--text-light);
+}
+
+.dashboard-tabs {
+  display: flex;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 25px;
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--muted-text);
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition);
+}
+
+.tab-btn.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background-color: var(--primary-color);
+}
+
+.letters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.letter-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  padding: 24px;
+  transition: var(--transition);
+}
+
+.letter-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+.letter-card h3 {
+  margin-bottom: 12px;
+  font-size: 20px;
+  color: var(--text-color);
+}
+
+.letter-preview {
+  font-size: 14px;
+  color: var(--muted-text);
+  margin-bottom: 18px;
+  height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.letter-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.drive-badge {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.letter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.edit-btn,
+.view-btn {
+  background-color: #e8ebf0;
+  padding: 8px 16px;
+  color: #333;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.edit-btn:hover,
+.view-btn:hover {
+  background-color: #d3d8e0;
+}
+
+.delete-btn {
+  background-color: #ffe3e3;
+  color: var(--danger-color);
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  background-color: #ffcccc;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted-text);
+  font-size: 18px;
+}
+
+.no-letters {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  grid-column: 1 / -1;
+}
+
+.no-letters p {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: var(--muted-text);
+}
+
+.no-letters button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px 22px;
+}
+
+.drive-letter {
+  border-left: 4px solid var(--secondary-color);
+  padding-left: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .dashboard-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .dashboard-actions button {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-actions {
+    flex-direction: column;
+  }
+  .dashboard-header h1{
+    font-size: 26px;
+  }
+
+  .letters-grid {
+    grid-template-columns: 1fr;
+  }
+}
