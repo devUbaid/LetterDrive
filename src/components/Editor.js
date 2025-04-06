@@ -27,57 +27,10 @@ function Editor({ user }) {
 
   const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
-  // Fix text direction issue immediately when component mounts
-  useEffect(() => {
-    // Force direction on parent elements
-    document.documentElement.setAttribute('dir', 'ltr');
-    document.body.setAttribute('dir', 'ltr');
-    
-    // Apply a CSS override for the specific editor
-    const style = document.createElement('style');
-    style.innerHTML = `
-      .letter-content-editable, 
-      .letter-content-editable * {
-        direction: ltr !important;
-        text-align: left !important;
-        unicode-bidi: plaintext !important;
-      }
-      
-      /* Ensure cursor is at the correct side */
-      .letter-content-editable {
-        caret-color: black;
-      }
-    `;
-    document.head.appendChild(style);
-    
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
-  // Initial data fetch
   useEffect(() => {
     if (id) fetchLetter();
     else setCursorToEnd();
   }, [id]);
-
-  // Monitor and fix text direction on content changes
-  useEffect(() => {
-    if (contentRef.current) {
-      const applyLtrToAllElements = (element) => {
-        element.style.direction = 'ltr';
-        element.style.textAlign = 'left';
-        element.setAttribute('dir', 'ltr');
-        
-        // Apply to all child elements
-        Array.from(element.children).forEach(child => {
-          applyLtrToAllElements(child);
-        });
-      };
-      
-      applyLtrToAllElements(contentRef.current);
-    }
-  }, [letter.content]);
 
   const setCursorToEnd = () => {
     setTimeout(() => {
@@ -137,38 +90,6 @@ function Editor({ user }) {
     }, 1000);
   };
 
-  // Handle content input with special direction handling
-  const handleContentInput = (e) => {
-    const value = e.currentTarget.innerHTML;
-    
-    // Store the selection position
-    saveSelection();
-    
-    // Update the state with the new content
-    setLetter(prev => ({ ...prev, content: value }));
-    
-    // Apply direction fixes to all elements
-    e.currentTarget.style.direction = 'ltr';
-    e.currentTarget.style.textAlign = 'left';
-    Array.from(e.currentTarget.children).forEach(child => {
-      child.style.direction = 'ltr';
-      child.style.textAlign = 'left';
-      child.setAttribute('dir', 'ltr');
-    });
-    
-    // Restore selection
-    restoreSelection();
-    
-    // Update toolbar state
-    updateToolbarState();
-    
-    // Schedule auto-save
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    saveTimeoutRef.current = setTimeout(() => {
-      saveLetter();
-    }, 1000);
-  };
-
   const saveLetter = async () => {
     setSaving(true);
     setSaveStatus('Saving...');
@@ -220,16 +141,6 @@ function Editor({ user }) {
     saveSelection();
     document.execCommand(format, false, null);
     updateToolbarState();
-    
-    // Fix direction on any newly created elements from formatting
-    if (contentRef.current) {
-      Array.from(contentRef.current.querySelectorAll('*')).forEach(el => {
-        el.style.direction = 'ltr';
-        el.style.textAlign = 'left';
-        el.setAttribute('dir', 'ltr');
-      });
-    }
-    
     contentRef.current.focus();
   };
 
@@ -249,9 +160,6 @@ function Editor({ user }) {
     // Create a span with the new size class
     const span = document.createElement('span');
     span.className = size;
-    span.dir = "ltr"; 
-    span.style.direction = "ltr";
-    span.style.textAlign = "left";
     
     const selection = window.getSelection();
     if (selection.rangeCount > 0) {
@@ -286,52 +194,6 @@ function Editor({ user }) {
       e.preventDefault();
       document.execCommand('insertHTML', false, '&emsp;');
     }
-    
-    // Force LTR on content after typing
-    setTimeout(() => {
-      if (contentRef.current) {
-        contentRef.current.style.direction = 'ltr';
-        contentRef.current.style.textAlign = 'left';
-      }
-    }, 0);
-  };
-
-  // Special handler for manual text input to ensure proper direction
-  const handleManualInput = (e) => {
-    // Only process if this is a direct text input event
-    if (e.inputType === 'insertText' && contentRef.current) {
-      const selection = window.getSelection();
-      if (selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        
-        // Create a text wrapper with proper direction
-        const textWrapper = document.createElement('span');
-        textWrapper.style.direction = 'ltr';
-        textWrapper.style.textAlign = 'left';
-        textWrapper.setAttribute('dir', 'ltr');
-        
-        // Wrap the current selection
-        if (!range.collapsed) {
-          textWrapper.textContent = e.data || '';
-          range.deleteContents();
-          range.insertNode(textWrapper);
-          
-          // Move cursor after inserted text
-          range.setStartAfter(textWrapper);
-          range.collapse(true);
-          selection.removeAllRanges();
-          selection.addRange(range);
-          
-          // Update state
-          setLetter(prev => ({
-            ...prev,
-            content: contentRef.current.innerHTML
-          }));
-          
-          e.preventDefault();
-        }
-      }
-    }
   };
 
   const downloadAsTxt = () => {
@@ -355,7 +217,7 @@ function Editor({ user }) {
   const wordLimit = 500;
 
   return (
-    <div className="editor-container" dir="ltr" style={{direction: "ltr"}}>
+    <div className="editor-container">
       <div className="editor-header">
         <input
           type="text"
@@ -364,8 +226,7 @@ function Editor({ user }) {
           onChange={handleChange}
           placeholder="Untitled Letter"
           className="letter-title-input"
-          dir="ltr"
-          style={{direction: "ltr", textAlign: "left"}}
+          // dir="ltr"
         />
         <div className="editor-actions">
           <span className="save-status">{saveStatus}</span>
@@ -438,19 +299,16 @@ function Editor({ user }) {
       </div>
 
       <div className="editor-content">
-        <bdi
+        <div
           ref={contentRef}
           className="letter-content-editable"
           contentEditable="true"
           suppressContentEditableWarning
-          dir="ltr"
-          style={{
-            direction: "ltr", 
-            textAlign: "left", 
-            unicodeBidi: "plaintext"
+          // dir="ltr"
+          onInput={(e) => {
+            handleChange({ target: { name: 'content', value: e.currentTarget.innerHTML } });
+            updateToolbarState();
           }}
-          onInput={handleContentInput}
-          onBeforeInput={handleManualInput}
           onKeyDown={handleKeyDown}
           onKeyUp={updateToolbarState}
           onMouseUp={updateToolbarState}
@@ -462,7 +320,7 @@ function Editor({ user }) {
             updateToolbarState();
           }}
           dangerouslySetInnerHTML={{ __html: letter.content }}
-        ></bdi>
+        ></div>
       </div>
     </div>
   );
