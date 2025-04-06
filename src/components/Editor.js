@@ -320,7 +320,7 @@ function Editor({ user }) {
             }
             updateToolbarState();
           }}
-          dangerouslySetInnerHTML={{ __html: letter.content }}
+          
         ></div>
       </div>
     </div>
