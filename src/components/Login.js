@@ -6,8 +6,7 @@ import loginIllustration from "../assets/login-illustration.svg"
 
 function Login({ setIsAuthenticated, setUser }) {
   const handleGoogleLogin = () => {
-    // Redirect to Google OAuth endpoint
-    window.location.href = "http://localhost:5000/api/auth/google?source=login"
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google?source=login`
   }
 
   return (
@@ -50,4 +49,3 @@ function Login({ setIsAuthenticated, setUser }) {
 }
 
 export default Login
-

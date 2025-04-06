@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import { Link } from "react-router-dom"
 import "../styles/Auth.css"
 import googleIcon from "../assets/google-icon.svg"
@@ -6,9 +6,9 @@ import signupIllustration from "../assets/signup-illustration.svg"
 
 function SignUp({ setIsAuthenticated, setUser }) {
   const handleGoogleSignUp = () => {
-    // Redirect to Google OAuth endpoint
-    // This is the same endpoint as login, but we can track that it came from signup
-    window.location.href = "http://localhost:5000/api/auth/google?source=signup"
+    // Use environment variable for backend URL
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"
+    window.location.href = `${backendUrl}/api/auth/google?source=signup`
   }
 
   return (
@@ -53,4 +53,3 @@ function SignUp({ setIsAuthenticated, setUser }) {
 }
 
 export default SignUp
-
