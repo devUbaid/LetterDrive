@@ -239,15 +239,17 @@ function Editor({ user }) {
           className="letter-title-input"
         />
         <div className="editor-actions">
-          <span className="save-status">{saveStatus}</span>
+        <button onClick={downloadAsTxt}>Download TXT</button>
+        <button onClick={exportToPDF}>Export to PDF</button>
+        <button className="save-drive-btn" onClick={saveLetterToDrive} disabled={savingToDrive}>
+            {savingToDrive ? 'Saving to Drive...' : 'Save to Google Drive'}
+          </button>
           <button className="save-btn" onClick={saveLetter} disabled={saving}>
             {saving ? 'Saving...' : 'Save'}
           </button>
-          <button className="save-drive-btn" onClick={saveLetterToDrive} disabled={savingToDrive}>
-            {savingToDrive ? 'Saving to Drive...' : 'Save to Google Drive'}
-          </button>
-          <button onClick={downloadAsTxt}>Download TXT</button>
-          <button onClick={exportToPDF}>Export to PDF</button>
+          <span className="save-status">{saveStatus}</span>
+          
+          
         </div>
       </div>
 

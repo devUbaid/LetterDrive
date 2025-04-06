@@ -118,11 +118,13 @@ function Dashboard({ user }) {
           {activeTab === "local" && letters.length > 0 ? (
             letters.map((letter) => (
               <div className="letter-card" key={letter._id}>
-                <h3>{letter.title || "Untitled Letter"}</h3>
-                <div
-                  className="letter-preview"
-                  dangerouslySetInnerHTML={{ __html: letter.content.substring(0, 150) + "..." }}
-                ></div>
+                <div className="letter-box">
+                  <h3 className="letter-title">{letter.title || "Untitled Letter"}</h3>
+                  <div
+                    className="letter-preview"
+                    dangerouslySetInnerHTML={{ __html: letter.content.substring(0, 150) + "..." }}
+                  ></div>
+                </div>
                 <div className="letter-meta">
                   <span>Last edited: {new Date(letter.updatedAt).toLocaleDateString()}</span>
                   {letter.savedToDrive && <span className="drive-badge">Saved to Drive</span>}
