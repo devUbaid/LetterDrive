@@ -29,15 +29,11 @@ function Editor({ user }) {
 
   useEffect(() => {
     if (id) fetchLetter();
-    else initializeNewLetter();
-  }, [id]);
-
-  const initializeNewLetter = () => {
-    if (contentRef.current) {
-      contentRef.current.innerHTML = '';
+    else {
+      if (contentRef.current) contentRef.current.innerHTML = '';
+      setCursorToEnd();
     }
-    setCursorToEnd();
-  };
+  }, [id]);
 
   const setCursorToEnd = () => {
     setTimeout(() => {
@@ -78,7 +74,14 @@ function Editor({ user }) {
       if (response.ok) {
         const data = await response.json();
         setLetter(data);
-        setCursorToEnd();
+
+        // Manually set content in editable div
+        setTimeout(() => {
+          if (contentRef.current) {
+            contentRef.current.innerHTML = data.content || '';
+          }
+          setCursorToEnd();
+        }, 0);
       } else {
         navigate('/dashboard');
       }
@@ -101,13 +104,17 @@ function Editor({ user }) {
     setSaving(true);
     setSaveStatus('Saving...');
     try {
+      const updatedLetter = {
+        ...letter,
+        content: contentRef.current?.innerHTML || '',
+      };
       const url = id ? `${API_BASE_URL}/api/letters/${id}` : `${API_BASE_URL}/api/letters`;
       const method = id ? 'PUT' : 'POST';
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(letter),
+        body: JSON.stringify(updatedLetter),
       });
       if (response.ok) {
         const data = await response.json();
@@ -160,14 +167,10 @@ function Editor({ user }) {
 
   const handleSizeChange = (size) => {
     saveSelection();
-    
-    // Remove any existing size classes from the selection
     document.execCommand('removeFormat', false, null);
-    
-    // Create a span with the new size class
     const span = document.createElement('span');
     span.className = size;
-    
+
     const selection = window.getSelection();
     if (selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
@@ -183,7 +186,7 @@ function Editor({ user }) {
         selection.addRange(newRange);
       }
     }
-    
+
     setActiveSize(size);
     contentRef.current.focus();
   };
@@ -205,7 +208,7 @@ function Editor({ user }) {
 
   const downloadAsTxt = () => {
     const element = document.createElement('a');
-    const file = new Blob([letter.content.replace(/<[^>]*>/g, '')], { type: 'text/plain' });
+    const file = new Blob([contentRef.current.innerText], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = `${letter.title || 'Untitled'}.txt`;
     document.body.appendChild(element);
@@ -215,12 +218,13 @@ function Editor({ user }) {
 
   const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.text(letter.content.replace(/<[^>]*>/g, ''), 10, 10);
+    doc.text(contentRef.current.innerText, 10, 10);
     doc.save(`${letter.title || 'Untitled'}.pdf`);
   };
 
-  const characterCount = letter.content.replace(/<[^>]*>/g, '').length;
-  const wordCount = letter.content.replace(/<[^>]*>/g, '').trim().split(/\s+/).length || 0;
+  const plainText = contentRef.current?.innerText || '';
+  const characterCount = plainText.length;
+  const wordCount = plainText.trim().split(/\s+/).filter(Boolean).length;
   const wordLimit = 500;
 
   return (
@@ -233,8 +237,6 @@ function Editor({ user }) {
           onChange={handleChange}
           placeholder="Untitled Letter"
           className="letter-title-input"
-          // dir="ltr"
-          
         />
         <div className="editor-actions">
           <span className="save-status">{saveStatus}</span>
@@ -250,11 +252,7 @@ function Editor({ user }) {
       </div>
 
       <div className="formatting-toolbar">
-        <select 
-          value={activeFont}
-          onChange={(e) => handleFontChange(e.target.value)}
-          aria-label="Font family"
-        >
+        <select value={activeFont} onChange={(e) => handleFontChange(e.target.value)}>
           <option value="font-arial">Arial</option>
           <option value="font-times">Times New Roman</option>
           <option value="font-courier">Courier New</option>
@@ -262,44 +260,24 @@ function Editor({ user }) {
           <option value="font-verdana">Verdana</option>
         </select>
 
-        <select 
-          value={activeSize}
-          onChange={(e) => handleSizeChange(e.target.value)}
-          aria-label="Font size"
-        >
+        <select value={activeSize} onChange={(e) => handleSizeChange(e.target.value)}>
           <option value="text-small">Small</option>
           <option value="text-normal">Normal</option>
           <option value="text-large">Large</option>
           <option value="text-xlarge">Extra Large</option>
         </select>
 
-        <button 
-          onClick={() => handleFormatting('bold')} 
-          className={activeFormats.bold ? 'active' : ''} 
-          aria-label="Bold"
-        >
+        <button onClick={() => handleFormatting('bold')} className={activeFormats.bold ? 'active' : ''}>
           <b>B</b>
         </button>
-        <button 
-          onClick={() => handleFormatting('italic')} 
-          className={activeFormats.italic ? 'active' : ''} 
-          aria-label="Italic"
-        >
+        <button onClick={() => handleFormatting('italic')} className={activeFormats.italic ? 'active' : ''}>
           <i>I</i>
         </button>
-        <button 
-          onClick={() => handleFormatting('underline')} 
-          className={activeFormats.underline ? 'active' : ''} 
-          aria-label="Underline"
-        >
+        <button onClick={() => handleFormatting('underline')} className={activeFormats.underline ? 'active' : ''}>
           <u>U</u>
         </button>
-        <button onClick={() => handleFormatting('insertUnorderedList')} aria-label="Bullet list">
-          • List
-        </button>
-        <button onClick={() => handleFormatting('insertOrderedList')} aria-label="Numbered list">
-          1. List
-        </button>
+        <button onClick={() => handleFormatting('insertUnorderedList')}>• List</button>
+        <button onClick={() => handleFormatting('insertOrderedList')}>1. List</button>
       </div>
 
       <div className="word-count-status">
@@ -312,28 +290,18 @@ function Editor({ user }) {
           className="letter-content-editable"
           contentEditable="true"
           suppressContentEditableWarning
-          // dir="ltr"
-          onInput={(e) => {
-            const newContent = e.currentTarget.innerHTML;
-            setLetter(prev => ({ ...prev, content: newContent }));
+          onInput={() => {
+            setLetter((prev) => ({ ...prev, content: contentRef.current.innerHTML }));
             updateToolbarState();
-            
-            if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-            saveTimeoutRef.current = setTimeout(() => {
-              saveLetter();
-            }, 1000);
           }}
           onKeyDown={handleKeyDown}
           onKeyUp={updateToolbarState}
           onMouseUp={updateToolbarState}
           onBlur={saveSelection}
           onFocus={() => {
-            if (!letter.content) {
-              setCursorToEnd();
-            }
+            if (!letter.content) setCursorToEnd();
             updateToolbarState();
           }}
-          
         ></div>
       </div>
     </div>
