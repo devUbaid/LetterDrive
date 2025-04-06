@@ -81,6 +81,27 @@ function Dashboard({ user }) {
     }
   }
 
+  const deleteDriveLetter = async (fileId) => {
+    if (!window.confirm("Are you sure you want to delete this Google Drive letter?")) {
+      return
+    }
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/drive/delete/${fileId}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+
+      if (response.ok) {
+        setDriveLetters(driveLetters.filter((letter) => letter.id !== fileId))
+      } else {
+        console.error("Failed to delete Google Drive letter")
+      }
+    } catch (error) {
+      console.error("Error deleting Google Drive letter:", error)
+    }
+  }
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -103,10 +124,16 @@ function Dashboard({ user }) {
       </div>
 
       <div className="dashboard-tabs">
-        <button className={`tab-btn ${activeTab === "local" ? "active" : ""}`} onClick={() => setActiveTab("local")}>
+        <button
+          className={`tab-btn ${activeTab === "local" ? "active" : ""}`}
+          onClick={() => setActiveTab("local")}
+        >
           My Letters
         </button>
-        <button className={`tab-btn ${activeTab === "drive" ? "active" : ""}`} onClick={fetchDriveLetters}>
+        <button
+          className={`tab-btn ${activeTab === "drive" ? "active" : ""}`}
+          onClick={fetchDriveLetters}
+        >
           Google Drive
         </button>
       </div>
@@ -156,6 +183,9 @@ function Dashboard({ user }) {
                   >
                     Open in Drive
                   </a>
+                  <button onClick={() => deleteDriveLetter(letter.id)} className="delete-btn">
+                    Delete
+                  </button>
                 </div>
               </div>
             ))
