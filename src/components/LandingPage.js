@@ -1,10 +1,13 @@
-import { useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
-import "../styles/LandingPage.css"
+import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import "../styles/LandingPage.css";
+// Import react-icons
+import { FaGoogle, FaEdit, FaFont, FaSave, FaFolderOpen, FaLock } from "react-icons/fa";
+import { FaTwitter, FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 function LandingPage() {
-  const observerRef = useRef(null)
-  const heroImageRef = useRef(null)
+  const observerRef = useRef(null);
+  const heroImageRef = useRef(null);
 
   useEffect(() => {
     // Animation for elements that should animate when they come into view
@@ -12,38 +15,38 @@ function LandingPage() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("animate-in")
+            entry.target.classList.add("animate-in");
           }
-        })
+        });
       },
-      { threshold: 0.1 },
-    )
+      { threshold: 0.1 }
+    );
 
     // Select all elements with the animate-on-scroll class
-    const animatedElements = document.querySelectorAll(".animate-on-scroll")
+    const animatedElements = document.querySelectorAll(".animate-on-scroll");
     animatedElements.forEach((el) => {
-      observerRef.current.observe(el)
-    })
+      observerRef.current.observe(el);
+    });
 
     // Hero image parallax effect
     const handleScroll = () => {
       if (heroImageRef.current) {
-        const scrollValue = window.scrollY
-        heroImageRef.current.style.transform = `translateY(${scrollValue * 0.2}px)`
+        const scrollValue = window.scrollY;
+        heroImageRef.current.style.transform = `translateY(${scrollValue * 0.2}px)`;
       }
-    }
+    };
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
       if (observerRef.current) {
         animatedElements.forEach((el) => {
-          observerRef.current.unobserve(el)
-        })
+          observerRef.current.unobserve(el);
+        });
       }
-      window.removeEventListener("scroll", handleScroll)
-    }
-  }, [])
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <div className="landing-page">
@@ -65,14 +68,14 @@ function LandingPage() {
         </div>
         <div className="hero-image-container">
           <div className="hero-image" ref={heroImageRef}>
-            <img src="/images/hero-image1.png" alt="Letter Editor Interface" />
+            <img src="/hero-image.webp" loading="eager" alt="Letter Editor Interface" />
           </div>
           <div className="hero-shape-1"></div>
           <div className="hero-shape-2"></div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section - Updated with React Icons */}
       <section id="features" className="features">
         <div className="section-header animate-on-scroll">
           <h2>Powerful Features</h2>
@@ -81,37 +84,49 @@ function LandingPage() {
 
         <div className="features-grid">
           <div className="feature-card animate-on-scroll">
-            <div className="feature-icon google-icon"></div>
+            <div className="feature-icon">
+              <FaGoogle size={30} color="#4285F4" />
+            </div>
             <h3>Google Integration</h3>
             <p>Sign in with your Google account and save letters directly to your Google Drive.</p>
           </div>
 
           <div className="feature-card animate-on-scroll">
-            <div className="feature-icon editor-icon"></div>
+            <div className="feature-icon">
+              <FaEdit size={30} color="#34A853" />
+            </div>
             <h3>Simple Editor</h3>
             <p>A clean, distraction-free editor that lets you focus on your writing.</p>
           </div>
 
           <div className="feature-card animate-on-scroll">
-            <div className="feature-icon formatting-icon"></div>
+            <div className="feature-icon">
+              <FaFont size={30} color="#EA4335" />
+            </div>
             <h3>Rich Formatting</h3>
             <p>Add style to your letters with bold, italic, lists, and more formatting options.</p>
           </div>
 
           <div className="feature-card animate-on-scroll">
-            <div className="feature-icon autosave-icon"></div>
+            <div className="feature-icon">
+              <FaSave size={30} color="#FBBC05" />
+            </div>
             <h3>Auto-Save</h3>
             <p>Never lose your work with automatic saving as you type.</p>
           </div>
 
           <div className="feature-card animate-on-scroll">
-            <div className="feature-icon organize-icon"></div>
+            <div className="feature-icon">
+              <FaFolderOpen size={30} color="#4285F4" />
+            </div>
             <h3>Organized Storage</h3>
             <p>All your letters are neatly organized in a dedicated folder on Google Drive.</p>
           </div>
 
           <div className="feature-card animate-on-scroll">
-            <div className="feature-icon secure-icon"></div>
+            <div className="feature-icon">
+              <FaLock size={30} color="#34A853" />
+            </div>
             <h3>Secure & Private</h3>
             <p>Your letters are private and secure, accessible only to you.</p>
           </div>
@@ -172,7 +187,7 @@ function LandingPage() {
               </p>
             </div>
             <div className="testimonial-author">
-              <img src="/images/user1.png" alt="Sarah Johnson" className="author-image" />
+              <img src="/images/user1.png" alt="Sarah Johnson" className="author-image" loading="lazy"/>
               <div className="author-info">
                 <h4>Sarah Johnson</h4>
                 <p>Marketing Manager</p>
@@ -188,7 +203,7 @@ function LandingPage() {
               </p>
             </div>
             <div className="testimonial-author">
-              <img src="/images/user2.png" alt="Michael Chen" className="author-image" />
+              <img src="/images/user2.png" alt="Michael Chen" className="author-image" loading="lazy"/>
               <div className="author-info">
                 <h4>Michael Chen</h4>
                 <p>Content Creator</p>
@@ -204,7 +219,7 @@ function LandingPage() {
               </p>
             </div>
             <div className="testimonial-author">
-              <img src="/images/user3.png" alt="Emily Rodriguez" className="author-image" />
+              <img src="/images/user3.png" alt="Emily Rodriguez" className="author-image" loading="lazy"/>
               <div className="author-info">
                 <h4>Emily Rodriguez</h4>
                 <p>Small Business Owner</p>
@@ -225,7 +240,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer - Updated with React Icons */}
       <footer className="footer">
         <div className="footer-content">
           <div className="footer-logo">
@@ -284,16 +299,23 @@ function LandingPage() {
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Letter Drive. All rights reserved.</p>
           <div className="social-links">
-            <a href="https://twitter.com" className="social-link twitter"></a>
-            <a href="https://facebook.com" className="social-link facebook"></a>
-            <a href="https://instagram.com" className="social-link instagram"></a>
-            <a href="https://linkedin.com" className="social-link linkedin"></a>
+            <a href="https://twitter.com" className="social-link">
+              <FaTwitter size={20} color="rgba(255,255,255,0.7)" />
+            </a>
+            <a href="https://facebook.com" className="social-link">
+              <FaFacebook size={20} color="rgba(255,255,255,0.7)" />
+            </a>
+            <a href="https://instagram.com" className="social-link">
+              <FaInstagram size={20} color="rgba(255,255,255,0.7)" />
+            </a>
+            <a href="https://linkedin.com" className="social-link">
+              <FaLinkedin size={20} color="rgba(255,255,255,0.7)" />
+            </a>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
-export default LandingPage
-
+export default LandingPage;
