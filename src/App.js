@@ -53,7 +53,11 @@ function App() {
   }
 
   if (loading) {
-    return <div className="loading-screen">Loading...</div>
+    return (
+      <div className="loading-screen">
+        <img src="/loader.gif" alt="Loading..." className="loader-image" />
+      </div>
+    )
   }
 
   return (
