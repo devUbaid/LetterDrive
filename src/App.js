@@ -8,8 +8,7 @@ import Editor from "./components/Editor"
 import Navbar from "./components/Navbar"
 import LandingPage from "./components/LandingPage"
 
-// Backend URL from .env file
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://letterdrive-backend.onrender.com"
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -21,16 +20,18 @@ function App() {
       try {
         const response = await fetch(`${BACKEND_URL}/api/auth/status`, {
           method: "GET",
-          credentials: "include",
+          credentials: "include", 
         })
 
         if (response.ok) {
           const data = await response.json()
           setIsAuthenticated(true)
           setUser(data.user)
+        } else {
+          console.warn("Not authenticated:", response.status)
         }
       } catch (error) {
-        console.error("Authentication check failed:", error)
+        console.error("Auth check error:", error)
       } finally {
         setLoading(false)
       }
@@ -86,8 +87,14 @@ function App() {
               )
             }
           />
-          <Route path="/dashboard" element={isAuthenticated ? <Dashboard user={user} /> : <Navigate to="/login" />} />
-          <Route path="/editor/:id?" element={isAuthenticated ? <Editor user={user} /> : <Navigate to="/login" />} />
+          <Route
+            path="/dashboard"
+            element={isAuthenticated ? <Dashboard user={user} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/editor/:id?"
+            element={isAuthenticated ? <Editor user={user} /> : <Navigate to="/login" />}
+          />
         </Routes>
       </div>
     </Router>
